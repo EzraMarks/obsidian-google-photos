@@ -68,7 +68,7 @@ export class PhotosModal extends Modal {
       await this.view.app.vault.adapter.writeBinary(thumbnailFolder + '/' + thumbnailImage.filename, imageData.arrayBuffer)
       const cursorPosition = this.editor.getCursor()
       const taken_date = thumbnailImage.creationTime.format().split('T')[0]
-      const taken_date_plus_one = thumbnailImage.creationTime.format().split('T')[0]
+      const taken_date_plus_one = moment(taken_date).add(1, 'day').format('YYYY-MM-DD');
       const linkText = handlebarParse(this.plugin.settings.thumbnailMarkdown, {
         local_thumbnail_link: linkPath,
         google_photo_id: thumbnailImage.photoId,
