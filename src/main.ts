@@ -1,7 +1,7 @@
 import { MarkdownView, Plugin, Editor, moment, TFile, Notice } from 'obsidian'
 import PhotosApi from './photosApi'
 import OAuth from './oauth'
-import { GooglePhotosSettingTab, GooglePhotosSettings, DEFAULT_SETTINGS, GetDateFromOptions } from './settings'
+import { GooglePhotosSettingTab, GooglePhotosSettings, DEFAULT_SETTINGS, GetDateFromOptions, ThumbnailSizeOption } from './settings'
 import { DailyPhotosModal } from './photoModal'
 import AlbumSuggest from './suggesters/AlbumSuggest'
 import CodeblockProcessor from './codeblockProcessor'
@@ -10,6 +10,24 @@ export default class GooglePhotos extends Plugin {
   settings: GooglePhotosSettings
   photosApi: PhotosApi
   oauth: OAuth
+
+  getThumbnailSize(): number {
+    const thumbnailSizeOption = this.settings.thumbnailSizeOption;
+    const thumbnailSize =
+      thumbnailSizeOption === ThumbnailSizeOption.SMALL
+        ? this.settings.thumbnailSizeSmall
+        : thumbnailSizeOption === ThumbnailSizeOption.MEDIUM
+        ? this.settings.thumbnailSizeMedium
+        : thumbnailSizeOption === ThumbnailSizeOption.LARGE
+        ? this.settings.thumbnailSizeLarge
+        : undefined;
+
+    if (!thumbnailSize) {
+      throw new Error("Undefined value for thumbnailSize")
+    }
+
+    return thumbnailSize;
+  }
 
   async onload () {
     await this.loadSettings()

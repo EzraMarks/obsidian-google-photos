@@ -8,14 +8,21 @@ export enum GetDateFromOptions {
   USE_TODAY = 'Use today\'s date',
 }
 
+export enum ThumbnailSizeOption {
+  SMALL = "small",
+  MEDIUM = "medium",
+  LARGE = "large"
+}
+
 export interface GooglePhotosSettings {
   clientId: string;
   clientSecret: string;
   accessToken: string;
   refreshToken: string;
   expires: string;
-  thumbnailWidth: number;
-  thumbnailHeight: number;
+  thumbnailSizeSmall: number;
+  thumbnailSizeMedium: number;
+  thumbnailSizeLarge: number;
   filename: string;
   thumbnailMarkdown: string;
   defaultToDailyPhotos: boolean;
@@ -28,6 +35,7 @@ export interface GooglePhotosSettings {
   getDateFromFrontMatterKey: string;
   getDateFromFormat: string;
   showPhotosInDateRange: boolean;
+  thumbnailSizeOption: ThumbnailSizeOption;
   showPhotosXDaysPast: number;
   showPhotosXDaysFuture: number;
 }
@@ -38,8 +46,9 @@ export const DEFAULT_SETTINGS: GooglePhotosSettings = {
   accessToken: '',
   refreshToken: '',
   expires: moment().format(),
-  thumbnailWidth: 400,
-  thumbnailHeight: 280,
+  thumbnailSizeSmall: 200,
+  thumbnailSizeMedium: 400,
+  thumbnailSizeLarge: 800,
   filename: 'YYYY-MM-DD[_google-photo_]HHmmss[.jpg]',
   thumbnailMarkdown: '[![]({{local_thumbnail_link}})]({{google_photo_url}}) ',
   defaultToDailyPhotos: true,
@@ -51,6 +60,7 @@ export const DEFAULT_SETTINGS: GooglePhotosSettings = {
   getDateFromFrontMatterKey: 'date',
   getDateFromFormat: 'YYYY-MM-DD',
   showPhotosInDateRange: false,
+  thumbnailSizeOption: ThumbnailSizeOption.SMALL,
   showPhotosXDaysPast: 7,
   showPhotosXDaysFuture: 1
 }
@@ -139,25 +149,35 @@ export class GooglePhotosSettingTab extends PluginSettingTab {
       .setHeading()
       .setDesc('Set the maximum size for your locally-saved thumbnail image. The image will fit within these dimensions while keeping the original aspect ratio.')
     new Setting(containerEl)
-      .setName('Thumbnail width')
-      .setDesc('Maximum width of the locally-saved thumbnail image in pixels')
+      .setName('Thumbnail size small')
+      .setDesc('Maximum width and height of the small-sized locally-saved thumbnail image in pixels')
       .addText(text => text
-        .setPlaceholder(DEFAULT_SETTINGS.thumbnailWidth.toString())
-        .setValue(this.plugin.settings.thumbnailWidth.toString())
+        .setPlaceholder(DEFAULT_SETTINGS.thumbnailSizeSmall.toString())
+        .setValue(this.plugin.settings.thumbnailSizeSmall.toString())
         .onChange(async value => {
-          this.plugin.settings.thumbnailWidth = +value
+          this.plugin.settings.thumbnailSizeSmall = +value
           await this.plugin.saveSettings()
         }))
     new Setting(containerEl)
-      .setName('Thumbnail height')
-      .setDesc('Maximum height of the locally-saved thumbnail image in pixels')
-      .addText(text => text
-        .setPlaceholder(DEFAULT_SETTINGS.thumbnailHeight.toString())
-        .setValue(this.plugin.settings.thumbnailHeight.toString())
-        .onChange(async value => {
-          this.plugin.settings.thumbnailHeight = +value
-          await this.plugin.saveSettings()
-        }))
+    .setName('Thumbnail size medium')
+    .setDesc('Maximum width and height of the medium-sized locally-saved thumbnail image in pixels')
+    .addText(text => text
+      .setPlaceholder(DEFAULT_SETTINGS.thumbnailSizeMedium.toString())
+      .setValue(this.plugin.settings.thumbnailSizeMedium.toString())
+      .onChange(async value => {
+        this.plugin.settings.thumbnailSizeMedium = +value
+        await this.plugin.saveSettings()
+      }))
+    new Setting(containerEl)
+    .setName('Thumbnail size large')
+    .setDesc('Maximum width and height of the large-sized locally-saved thumbnail image in pixels')
+    .addText(text => text
+      .setPlaceholder(DEFAULT_SETTINGS.thumbnailSizeLarge.toString())
+      .setValue(this.plugin.settings.thumbnailSizeLarge.toString())
+      .onChange(async value => {
+        this.plugin.settings.thumbnailSizeLarge = +value
+        await this.plugin.saveSettings()
+      }))
     new Setting(containerEl)
       .setName('Image filename format')
       .addText(text => text

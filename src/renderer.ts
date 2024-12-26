@@ -15,14 +15,12 @@ type ThumbnailClick = (event: MouseEvent) => Promise<void>
 
 export default class Renderer {
   plugin: GooglePhotos
-  thumbnailWidth: number
-  thumbnailHeight: number
+  thumbnailSize: number
   spinner: HTMLElement
 
   constructor (plugin: GooglePhotos) {
     this.plugin = plugin
-    this.thumbnailWidth = this.plugin.settings.thumbnailWidth
-    this.thumbnailHeight = this.plugin.settings.thumbnailHeight
+    this.thumbnailSize = this.plugin.getThumbnailSize();
 
     // Create a nice Google-themed loading spinner
     this.spinner = document.createElement('div')
@@ -163,7 +161,7 @@ export class GridView extends Renderer {
      */
     while (
       this.active && this.moreResults && this.scrollEl &&
-      this.scrollEl.scrollHeight - this.scrollEl.scrollTop < this.scrollEl.clientHeight + (5 * this.thumbnailHeight) &&
+      this.scrollEl.scrollHeight - this.scrollEl.scrollTop < this.scrollEl.clientHeight + (5 * this.thumbnailSize) &&
       (!targetEl.innerHTML || await this.isVisible(this.scrollEl)) // Element is visible in the viewport
     ) {
       // Perform the search with Photos API and output the result

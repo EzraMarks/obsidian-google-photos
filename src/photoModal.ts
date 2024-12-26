@@ -1,5 +1,6 @@
 import {
   App,
+  DropdownComponent,
   Editor,
   MarkdownView,
   Modal,
@@ -15,6 +16,7 @@ import GooglePhotos from './main'
 import { handlebarParse } from './handlebars'
 import Litepicker from 'litepicker'
 import { dateToGoogleDateFilter, GooglePhotosDateFilter } from 'photosApi'
+import { ThumbnailSizeOption } from 'settings'
 
 export class PhotosModal extends Modal {
   plugin: GooglePhotos
@@ -38,7 +40,8 @@ export class PhotosModal extends Modal {
       // Remove the photo grid and just show the loading spinner while we wait for the thumbnail to download
       await this.gridView.resetGrid()
       const thumbnailImage = <ThumbnailImage>event.target
-      const src = thumbnailImage.baseUrl + `=w${this.plugin.settings.thumbnailWidth}-h${this.plugin.settings.thumbnailHeight}`
+      const thumbnailSize = this.plugin.getThumbnailSize();
+      const src = thumbnailImage.baseUrl + `=w${thumbnailSize}-h${thumbnailSize}`
       const noteFolder = this.view.file.path.split('/').slice(0, -1).join('/')
       // Use the note folder or the user-specified folder from Settings
       let thumbnailFolder = noteFolder
@@ -96,6 +99,7 @@ export class DailyPhotosModal extends PhotosModal {
   limitPhotosToNoteDate = false
   dateSetting: Setting
   dateToggle: ToggleComponent
+  thumbnailSizeDropdown: DropdownComponent
 
   /**
    * Update the human-readable date toggle text
@@ -196,6 +200,24 @@ export class DailyPhotosModal extends PhotosModal {
         this.updateDateText()
         setting.nameEl.onclick = () => { datePicker.show(setting.nameEl) }
       })
+
+    // Create the dropdowm to select thumbnail size option
+    new Setting(contentEl)
+    .setClass('google-photos-fit-content')
+    .setName("Thumbnail size")
+    .addDropdown(dropdown => {
+      this.thumbnailSizeDropdown = dropdown
+      dropdown
+        .setValue(this.plugin.settings.thumbnailSizeOption)
+        .addOption(ThumbnailSizeOption.SMALL, "Small")
+        .addOption(ThumbnailSizeOption.MEDIUM, "Medium")
+        .addOption(ThumbnailSizeOption.LARGE, "Large")
+        .onChange(value => {
+          this.plugin.settings.thumbnailSizeOption = value as ThumbnailSizeOption
+          this.updateView()
+          this.plugin.saveSettings()
+        })
+    })
 
     // Attach the grid view to the modal
     contentEl.appendChild(this.gridView.containerEl)
