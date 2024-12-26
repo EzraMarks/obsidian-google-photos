@@ -208,10 +208,10 @@ export class DailyPhotosModal extends PhotosModal {
     .addDropdown(dropdown => {
       this.thumbnailSizeDropdown = dropdown
       dropdown
-        .setValue(this.plugin.settings.thumbnailSizeOption)
         .addOption(ThumbnailSizeOption.SMALL, "Small")
         .addOption(ThumbnailSizeOption.MEDIUM, "Medium")
         .addOption(ThumbnailSizeOption.LARGE, "Large")
+        .setValue(this.plugin.settings.thumbnailSizeOption)
         .onChange(value => {
           this.plugin.settings.thumbnailSizeOption = value as ThumbnailSizeOption
           this.updateView()
