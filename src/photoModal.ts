@@ -218,6 +218,10 @@ export class DailyPhotosModal extends PhotosModal {
           this.plugin.saveSettings()
         })
     })
+    .then(setting => {
+      // The "mod-toggle" class makes the dropdown be styled like a toggle - on mobile, this styling takes up one line rather than two
+      setting.settingEl.classList.add('mod-toggle');
+    })
 
     // Attach the grid view to the modal
     contentEl.appendChild(this.gridView.containerEl)
