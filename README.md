@@ -26,6 +26,30 @@ If you're using Obsidian Sync, you'll need to make sure the **Installed communit
 
 # Usage instructions
 
+## Edit the inserted Markdown format
+
+You can use template variables to change the way the photo is imported / inserted, in the **Inserted Markdown** setting..
+
+The default format is as follows, which will add a thumbnail image which links back to the original Google Photo URL:
+
+```markdown
+[![]({{local_thumbnail_link}})]({{google_photo_url}}) 
+```
+
+If you want to bring across the description text field from your photos, you could add it as text following the photo like this:
+
+```markdown
+[![]({{local_thumbnail_link}})]({{google_photo_url}})
+
+{{google_photo_desc}}
+```
+
+Alternatively if you use an [image captions plugin](https://obsidian.md/plugins?id=image-captions) you could use this format:
+
+```markdown
+[![{{google_photo_desc}}]({{local_thumbnail_link}})]({{google_photo_url}})
+```
+
 ## Insert an album
 
 1. Open the command palette, and choose **Google Photos: Insert album**.

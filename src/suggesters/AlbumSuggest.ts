@@ -4,7 +4,7 @@ import PhotosApi, { GooglePhotosAlbum } from '../photosApi'
 
 type Callback = (albumData: GooglePhotosAlbum) => void
 
-export default class AlbumSuggest extends SuggestModal<any> {
+export default class AlbumSuggest extends SuggestModal<unknown> {
   plugin: GooglePhotos
   callback: Callback
 
@@ -19,8 +19,8 @@ export default class AlbumSuggest extends SuggestModal<any> {
     super.open()
   }
 
-  async getSuggestions (query: string) {
-    let albums = []
+  async getSuggestions (): Promise<GooglePhotosAlbum[]> {
+    let albums: GooglePhotosAlbum[] = []
     try {
       const photosApi = new PhotosApi(this.plugin)
       const result = await photosApi.listAlbums()
@@ -32,11 +32,13 @@ export default class AlbumSuggest extends SuggestModal<any> {
     return albums
   }
 
-  renderSuggestion (item: any, el: HTMLElement) {
-    el.setText(item.title)
+  renderSuggestion (item: GooglePhotosAlbum, el: HTMLElement) {
+    // If this is a shared album, add some extra text to identify it in the list
+    const sharedAlbum = item.isSharedAlbum ? ' - 👥 shared album' : ''
+    el.setText(item.title + sharedAlbum)
   }
 
-  onChooseSuggestion (item: GooglePhotosAlbum, evt: MouseEvent | KeyboardEvent) {
+  onChooseSuggestion (item: GooglePhotosAlbum) {
     // Send the chosen album to the callback function
     this.callback(item)
   }
